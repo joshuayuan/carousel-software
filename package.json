@@ -21,6 +21,7 @@
     "mongodb": "^2.2.21",
     "multer": "^1.2.1",
     "node_digikey_parser": "git+https://github.com/brentyi/node_digikey_parser.git",
+    "request": "^2.79.0",
     "socket.io": "^1.7.2"
   }
 }

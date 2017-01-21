@@ -1,6 +1,6 @@
 var express = require('express')
 var app = express()
-var server = app.listen(80);
+var server = app.listen(3000);
 var io = require('socket.io').listen(server);
 
 //lets require/import the mongodb native drivers.
@@ -39,7 +39,7 @@ MongoClient.connect(url, function(err, db) {
         res.send("success");
         console.log(req.file);
         const exec = require('child_process').exec;
-        exec('/usr/local/Cellar/zbar/0.10_3/bin/zbarimg ' + req.file.path, (error, stdout, stderr) => {
+        exec('zbarimg ' + req.file.path, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
                 return;
