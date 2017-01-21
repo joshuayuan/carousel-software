@@ -1,10 +1,22 @@
 <!DOCTYPE>
 <html>
-<head> <title> Okay Raphael </title> </head>
-<body>
-<h1> Brent: </h1>
-<p> Hello Raphael </p>
+    <head> <title> Okay Raphael </title> 
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+        <script src="/script.js"></script>
+    </head>
+    <body>
+        <h1> Brent: </h1>
+        <p> Hello Raphael </p>
+        <form id="upload-form"
+              enctype="multipart/form-data"
+              action="/upload"
+              method="post" >
 
-<input type="file" accept="image/*;capture=camera">
-</body>
+            <input id="upload-input" name="picture" type="file" accept="image/*;capture=camera">
+        </form>
+
+
+
+    </body>
 </html>

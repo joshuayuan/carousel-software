@@ -17,6 +17,8 @@
     "url": "https://github.com/joshuayuan/carousel-software/issues"
   },
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "mongodb": "^2.2.21",
+    "multer": "^1.2.1"
   }
 }
