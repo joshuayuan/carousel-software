@@ -1,3 +1,6 @@
+var express = require('express')
+var app = express()
+
 //lets require/import the mongodb native drivers.
 var mongodb = require('mongodb');
 
@@ -8,6 +11,12 @@ var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://localhost:27017/carouseldb';
 
 
+app.use(express.static('client'))
+
+
+app.listen(3000, function () {
+      console.log('Example app listening on port 3000!')
+})
 
 
 

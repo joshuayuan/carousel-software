@@ -15,5 +15,8 @@
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/joshuayuan/carousel-software/issues"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
   }
 }
