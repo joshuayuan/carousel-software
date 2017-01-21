@@ -1,5 +1,11 @@
 $(function() {
+    var socket = io();
     $('#upload-input').change(function() {
+        $('#upload-form').submit();
+        $('#upload-input').val('');
+    });
+    $('#upload').click(function() {
+        
         $('#upload-form').submit();
         $('#upload-input').val('');
     });
@@ -14,5 +20,8 @@ $(function() {
             }
         });
         return false;
+    });
+    socket.on('get part', function(data)
+    {
     });
 });
