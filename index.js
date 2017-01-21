@@ -16,7 +16,7 @@ var partinfo = require('./node_modules/node_partnumber_info/PartInfo.js');
 
 var roslib = require('roslib');
 var ros = new roslib.Ros({
-    url : 'ws://192.168.2.130:11311'
+    url : 'ws://192.168.2.130:9090'
 });
 
 ros.on('connection', function() {
@@ -64,14 +64,15 @@ MongoClient.connect(url, function(err, db) {
             }
             console.log(`${stdout}`);
                 // TODO: Parse barcodes
-                var barcode = '';
 
             res.send("success");
             if (req.body.bagtype == "digikey")
             {
+                var barcode = stdout.split(":")[1];
                 digikey(barcode, function(data)
                 {
                     // TODO: Generate position
+                    console.log(data);
                     var position = 0;
                     data.position = position;
                     collection.insert(data);
@@ -79,8 +80,35 @@ MongoClient.connect(url, function(err, db) {
             }
             else
             {
+                var barcodes = [];
+                var barcode;
+                if (stdout.indexOf("CODE-39:") == -1 ){
+                    barcodes = stdout.split("CODE-128:");
+                    var maxlength = 0;
+                    var code = barcodes[0];
+                    for (var i = 0; i < barcodes.length; i++){
+                        var bc = barcodes[i].trim();
+                        if (bc.length > maxlength){
+                            maxlength = bc.length;
+                            code = bc;
+                        }
+                    }
+                    barcode = code.substring(code.indexOf("-")+1,code.length);
+                    console.log(barcode);
+                } else {
+                    barcodes = stdout.split("CODE-39:");
+                    barcode = barcodes[0];
+                    for (var i = 0; i < barcodes.length; i++){
+                        var bc = barcodes[i].trim(); 
+                        if (bc.indexOf("MULT") > 0){
+                            barcode = bc.split("MULT")[0];
+                        }
+                    }
+                }
+                
                 partinfo(barcode, function(data)
                 {
+                    console.log(data);
                     var position = 0;
                     data.position = position;
                     collection.insert(data);
