@@ -21,7 +21,12 @@ $(function() {
         });
         return false;
     });
-    socket.on('get part', function(data)
-    {
+    
+    $("#retrieval").click(function() {
+        socket.emit('get part', $('#partnumber').val());
+    });
+    
+    socket.on('get part', function(data) {
+        console.log(data);
     });
 });

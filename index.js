@@ -121,11 +121,15 @@ MongoClient.connect(url, function(err, db) {
     io.on('connection', function(socket) {
         console.log('a user connected');
         socket.on('get part', function(number) {
-            var doc = collection.findOne({'partNumber': number});
-            if (doc)
+            var doc = collection.findOne({'partNumber': number}, function(err, doc)
             {
-                socket.emit('get part', doc);
-            }
+                console.log(number);
+                console.log(doc);
+                if (doc)
+                {
+                    socket.emit('get part', doc);
+                }
+            });
         });
     });
 
