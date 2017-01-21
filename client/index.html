@@ -12,8 +12,10 @@
               enctype="multipart/form-data"
               action="/upload"
               method="post" >
-
-              <input id="upload-input" name="picture" type="file" accept="image/*;capture=camera"><br>
+            <input type="radio" name="bagtype" value="digikey"> Digikey <br>
+            <input type="radio" name="bagtype" value="notdigikey"> Not Digikey <br>
+            
+            <input id="upload-input" name="picture" type="file" accept="image/*;capture=camera"><br>
             <button id="upload">Upload</button>
         </form>
 

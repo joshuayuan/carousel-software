@@ -11,7 +11,25 @@ var MongoClient = mongodb.MongoClient;
 
 // Connection URL. This is where your mongodb server is running.
 var url = 'mongodb://localhost:27017/carouseldb';
-var digikey = require('node_digikey_parser');
+var digikey = require('./node_modules/node_digikey_parser/DigikeyPart.js');
+var partinfo = require('./node_modules/node_partnumber_info/PartInfo.js');
+
+var roslib = require('roslib');
+var ros = new roslib.Ros({
+    url : 'ws://192.168.2.130:11311'
+});
+
+ros.on('connection', function() {
+    console.log('Connected to websocket server.');
+});
+
+ros.on('error', function(error) {
+    console.log('Error connecting to websocket server: ', error);
+});
+
+ros.on('close', function() {
+    console.log('Connection to websocket server closed.');
+});
 
 var multer= require('multer');
 var storage = multer.diskStorage({
@@ -36,26 +54,39 @@ MongoClient.connect(url, function(err, db) {
     app.use(express.static('client'))
 
     app.post('/upload', upload.single('picture'), function (req, res, next) {
-        res.send("success");
         console.log(req.file);
         const exec = require('child_process').exec;
         exec('zbarimg ' + req.file.path, (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
+                res.send("failure");
                 return;
             }
-            console.log(`stdout: ${stdout}`);
+            console.log(`${stdout}`);
+                // TODO: Parse barcodes
+                var barcode = '';
 
-            // TODO: Parse barcodes
-            var barcode = '';
-            // TODO: Get other data from websites
-            digikey(barcode, function(data)
+            res.send("success");
+            if (req.body.bagtype == "digikey")
             {
-                // TODO: Generate position
-                var position = 0;
-                data.position = position;
-                collection.insert(data);
-            });
+                digikey(barcode, function(data)
+                {
+                    // TODO: Generate position
+                    var position = 0;
+                    data.position = position;
+                    collection.insert(data);
+                });
+            }
+            else
+            {
+                partinfo(barcode, function(data)
+                {
+                    var position = 0;
+                    data.position = position;
+                    collection.insert(data);
+                });
+
+            }
         });
     });
 
