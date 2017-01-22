@@ -20,7 +20,7 @@ var partinfo = require('./node_modules/node_partnumber_info/PartInfo.js');
 
 var roslib = require('roslib');
 var ros = new roslib.Ros({
-    url : 'ws://192.168.2.130:9090'
+    url : 'ws://192.168.2.131:9090'
 });
 
 ros.on('connection', function() {
@@ -51,6 +51,7 @@ var storage = multer.diskStorage({
     }
 });
 var upload = multer({ storage: storage });
+var offset = 0.22;
 
 var MongoClient = require('mongodb').MongoClient;
 
@@ -63,11 +64,13 @@ MongoClient.connect(url, function(err, db) {
 
     var insertPart = function(data)
     {
+        if (data == undefined)
+            return;
         collection.find({'partNumber': data.partNumber}).toArray(function(err, result)
         {
             if (result.length == 0)
             {
-                collection.find({}).toArray(function(err, result) {
+                collection.find({}).sort({'position': 1}).toArray(function(err, result) {
                     var lastIndex = 0;
                     var empty = [];
                     for (var i = 0; i < result.length; i++)
@@ -97,8 +100,7 @@ MongoClient.connect(url, function(err, db) {
                         }
                         console.log('position ' + pos + ' written');
                     });
-                    var message = new roslib.Message({data: data.position % 15 * 2 * Math.PI / 15});
-                    console.log(data.position % 15 * 2 * Math.PI / 15);
+                    var message = new roslib.Message({data: (data.position % 15 * 2 * Math.PI / 15 + offset) % (2 * Math.PI)});
                     cmd.publish(message);
                     collection.insert(data);
                 });
@@ -116,7 +118,7 @@ MongoClient.connect(url, function(err, db) {
                     }
                     console.log('position ' + pos + ' written');
                 });
-                var message = new roslib.Message({data: position % 15 * 2 * Math.PI / 15});
+                var message = new roslib.Message({data: (position % 15 * 2 * Math.PI / 15 + offset) % (2 * Math.PI)});
                 console.log(position % 15 * 2 * Math.PI / 15);
                 cmd.publish(message);
             }
@@ -217,7 +219,7 @@ MongoClient.connect(url, function(err, db) {
                 }
                 console.log('position ' + pos + ' written');
             });
-            var message = new roslib.Message({data: position % 15 * 2 * Math.PI / 15});
+            var message = new roslib.Message({data: (position % 15 * 2 * Math.PI / 15 + offset) % (2 * Math.PI)});
             console.log(position % 15 * 2 * Math.PI / 15);
             cmd.publish(message);
             collection.remove({'position': position}, function(err, result)
