@@ -1,12 +1,19 @@
 <!DOCTYPE>
 <html>
     <head> <title> Okay Raphael </title> 
+        <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
         <script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
         <script src="/script.js"></script>
     </head>
     <body>
+        <button class="home_button" id="add">
+            Add Part
+        </button>
+        <button class="home_button" id="retrieve">
+            Retrieve Part
+        </button>
         <h1> Brent: </h1>
         <p> Okay, Raphael </p>
         <form id="upload-form"
@@ -16,7 +23,7 @@
             <input type="radio" name="bagtype" value="digikey"> Digikey <br>
             <input type="radio" name="bagtype" value="notdigikey"> Not Digikey <br>
             
-            <input id="upload-input" name="picture" type="file" accept="image/*;capture=camera"><br>
+            <input id="upload-input" name="picture" type="file" accept="image/*;capture=camera" style="visibility: hidden"><br>
             <button id="upload">Upload</button>
         </form>
         <h1> Raphael: </h1>

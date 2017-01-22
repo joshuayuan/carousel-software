@@ -1,0 +1,27 @@
+html, body
+{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.home_button
+{
+    height: 50vh;
+    width: 100%;
+    font-size: 4em;
+    box-shadow: none;
+    border: none;
+    position: absolute;
+}
+
+#add
+{
+    background-color: #4AE;
+}
+
+#retrieve
+{
+    background-color: #AED;
+    top: 50vh;
+}

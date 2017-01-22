@@ -4,8 +4,10 @@ $(function() {
         $('#upload-form').submit();
         $('#upload-input').val('');
     });
+    $('#add').click(function() {
+        $('#upload-input').click();
+    });
     $('#upload').click(function() {
-        
         $('#upload-form').submit();
         $('#upload-input').val('');
     });

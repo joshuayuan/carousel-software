@@ -51,6 +51,42 @@ MongoClient.connect(url, function(err, db) {
 
     var collection = db.collection('parts', function(err, collection) {});
 
+    var insertPart = function(data)
+    {
+        collection.find({'partNumber': data.partNumber}).toArray(function(err, result)
+        {
+            if (result.length == 0)
+            {
+                collection.find({}).toArray(function(err, result) {
+                    var lastIndex = 0;
+                    var empty = [];
+                    for (var i = 0; i < result.length; i++)
+                    {
+                        if (result[i].position > lastIndex + 1)
+                        {
+                            for (var j = lastIndex + 1; j < result[i].position; j++)
+                            {
+                                empty.push(j);
+                            }
+                        }
+                        lastIndex = result[i].position;
+                    }
+                    for (var j = lastIndex + 1; j < 45; j++)
+                    {
+                        empty.push(j);
+                    }
+                    data.position = empty[Math.floor(Math.random()*empty.length)];
+                    collection.insert(data);
+                });
+            }
+            else
+            {
+                var position = result[0].position;
+
+            }
+        });
+    };
+
     app.use(express.static('client'))
 
     app.post('/upload', upload.single('picture'), function (req, res, next) {
@@ -63,19 +99,18 @@ MongoClient.connect(url, function(err, db) {
                 return;
             }
             console.log(`${stdout}`);
-                // TODO: Parse barcodes
 
             res.send("success");
-            if (req.body.bagtype == "digikey")
+
+           var isDigikey = true; 
+
+            if ( isDigikey )
             {
                 var barcode = stdout.split(":")[1];
                 digikey(barcode, function(data)
                 {
-                    // TODO: Generate position
                     console.log(data);
-                    var position = 0;
-                    data.position = position;
-                    collection.insert(data);
+                    insertPart(data);
                 });
             }
             else
@@ -109,9 +144,7 @@ MongoClient.connect(url, function(err, db) {
                 partinfo(barcode, function(data)
                 {
                     console.log(data);
-                    var position = 0;
-                    data.position = position;
-                    collection.insert(data);
+                    insertPart(data);
                 });
 
             }
