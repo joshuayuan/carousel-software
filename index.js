@@ -1,6 +1,6 @@
 var express = require('express')
 var SerialPort = require('serialport');
-var port = new SerialPort('/dev/tty.usbmodem1411', {
+var port = new SerialPort('/dev/tty.usbmodem1421', {
       baudRate: 9600
 });
 var app = express()
@@ -123,8 +123,7 @@ MongoClient.connect(url, function(err, db) {
                 return;
             }
             console.log(`${stdout}`);
-
-            res.send("success");
+            
 
             var isDigikey = false; 
             var pn = stdout.split(":")[1].trim();
@@ -133,20 +132,20 @@ MongoClient.connect(url, function(err, db) {
             }
 
 
-
             if (isDigikey)
             {
                 var barcode = stdout.split(":")[1];
                 digikey(barcode, function(data)
                 {
                     console.log(data);
+                    res.send(data);
                     insertPart(data);
                 });
             }
             else
             {
                 var barcodes = [];
-                var barcode;
+                var barcode = "";
                 if (stdout.indexOf("CODE-39:") == -1 ){
                     barcodes = stdout.split("CODE-128:");
                     var maxlength = 0;
@@ -170,13 +169,17 @@ MongoClient.connect(url, function(err, db) {
                         }
                     }
                 }
-                
-                partinfo(barcode, function(data)
-                {
-                    console.log(data);
-                    insertPart(data);
-                });
+                if (barcode != ""){
+                    partinfo(barcode, function(data)
+                            {
+                                console.log(data);
+                                res.send(data);
+                                insertPart(data);
+                            });
 
+                } else {
+                    res.send("failure");
+                }
             }
         });
     });
