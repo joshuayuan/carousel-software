@@ -1,4 +1,8 @@
 var express = require('express')
+var SerialPort = require('serialport');
+var port = new SerialPort('/dev/tty.usbmodem1411', {
+      baudRate: 9600
+});
 var app = express()
 var server = app.listen(3000);
 var io = require('socket.io').listen(server);
@@ -29,6 +33,12 @@ ros.on('error', function(error) {
 
 ros.on('close', function() {
     console.log('Connection to websocket server closed.');
+});
+
+var cmd = new roslib.Topic({
+    ros : ros,
+    name : '/motor_controller/command',
+    messageType : 'std_msgs/Float64'
 });
 
 var multer= require('multer');
@@ -76,12 +86,26 @@ MongoClient.connect(url, function(err, db) {
                         empty.push(j);
                     }
                     data.position = empty[Math.floor(Math.random()*empty.length)];
+                    var pos = 1 << Math.floor(data.position / 15);
+
+                    var buf = new Buffer(1);
+                    buf[0] = pos;
+                    port.write(buf, function(err) {
+                        if (err) {
+                            return console.log('Error on write: ', err.message);
+                        }
+                        console.log('position ' + pos + ' written');
+                    });
+                    var message = new roslib.Message({data: data.position % 15 * 2 * Math.PI / 15});
+                    console.log(data.position % 15 * 2 * Math.PI / 15);
+                    cmd.publish(message);
                     collection.insert(data);
                 });
             }
             else
             {
                 var position = result[0].position;
+                //TODO
 
             }
         });
@@ -102,9 +126,15 @@ MongoClient.connect(url, function(err, db) {
 
             res.send("success");
 
-           var isDigikey = true; 
+            var isDigikey = false; 
+            var pn = stdout.split(":")[1].trim();
+            if (pn.length == 22 && !isNaN(pn)){
+               isDigikey = true; 
+            }
 
-            if ( isDigikey )
+
+
+            if (isDigikey)
             {
                 var barcode = stdout.split(":")[1];
                 digikey(barcode, function(data)
@@ -163,6 +193,16 @@ MongoClient.connect(url, function(err, db) {
                     socket.emit('get part', doc);
                 }
             });
+        });
+    });
+
+
+    port.on('open', function() {
+        port.write(5, function(err) {
+            if (err) {
+                return console.log('Error on write: ', err.message);
+            }
+            console.log('message written');
         });
     });
 
