@@ -1,6 +1,6 @@
 var express = require('express')
 var SerialPort = require('serialport');
-var port = new SerialPort('/dev/tty.usbmodem1421', {
+var port = new SerialPort('/dev/tty.usbmodem1411', {
       baudRate: 9600
 });
 var app = express()
@@ -86,6 +86,7 @@ MongoClient.connect(url, function(err, db) {
                         empty.push(j);
                     }
                     data.position = empty[Math.floor(Math.random()*empty.length)];
+                    console.log(empty);
                     var pos = 1 << Math.floor(data.position / 15);
 
                     var buf = new Buffer(1);
@@ -105,8 +106,19 @@ MongoClient.connect(url, function(err, db) {
             else
             {
                 var position = result[0].position;
-                //TODO
+                var pos = 1 << Math.floor(position / 15);
 
+                var buf = new Buffer(1);
+                buf[0] = pos;
+                port.write(buf, function(err) {
+                    if (err) {
+                        return console.log('Error on write: ', err.message);
+                    }
+                    console.log('position ' + pos + ' written');
+                });
+                var message = new roslib.Message({data: position % 15 * 2 * Math.PI / 15});
+                console.log(position % 15 * 2 * Math.PI / 15);
+                cmd.publish(message);
             }
         });
     };
@@ -191,22 +203,26 @@ MongoClient.connect(url, function(err, db) {
             {
                 console.log(number);
                 console.log(doc);
-                if (doc)
-                {
-                    socket.emit('get part', doc);
+                socket.emit('get part', doc);
+            });
+        });
+        socket.on('request part', function(position) {
+            var pos = 1 << Math.floor(position / 15);
+
+            var buf = new Buffer(1);
+            buf[0] = pos;
+            port.write(buf, function(err) {
+                if (err) {
+                    return console.log('Error on write: ', err.message);
                 }
+                console.log('position ' + pos + ' written');
+            });
+            var message = new roslib.Message({data: position % 15 * 2 * Math.PI / 15});
+            console.log(position % 15 * 2 * Math.PI / 15);
+            cmd.publish(message);
+            collection.remove({'position': position}, function(err, result)
+            {
             });
         });
     });
-
-
-    port.on('open', function() {
-        port.write(5, function(err) {
-            if (err) {
-                return console.log('Error on write: ', err.message);
-            }
-            console.log('message written');
-        });
-    });
-
 });

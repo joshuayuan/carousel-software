@@ -8,10 +8,16 @@ $(function() {
         $("#loading").css({"opacity":"1"});
     });
     $("#adder-done").click(function() {
-        $("#adder").animate({"top":"-100vh"}, 500);
+        $("#adder").animate({"top":"-100vh"}, 500, function()
+        {
+            $("#adder-partnumber").text("not found.");
+        });
     });
     $('#add').click(function() {
         $('#upload-input').click();
+    });
+    $('#retrieve').click(function() {
+        $("#retriever").animate({"top": "0"}, 500);
     });
     $('#upload').click(function() {
         $('#upload-form').submit();
@@ -44,12 +50,52 @@ $(function() {
         return false;
     });
     
-    $("#retrieval").click(function() {
+    var currentPart = null;
+    $("#retriever-search").click(function() {
         socket.emit('get part', $('#partnumber').val());
     });
     
     socket.on('get part', function(data) {
+        if (data == null)
+        {
+            return;
+        }
         console.log(data);
+        currentPart = data;
+        $("#retriever-partnumber").text(data.partNumber);
+        $("#retriever-manufacturer").html("Manufacturer: " + data.manufacturer);
+        $("#retriever-description").html("Description: " + data.description);
+        $("#retriever-info").animate({"opacity": "1.0"}, 200);
+    });
+    $("#retriever-request").click(function() {
+        if (currentPart == null)
+            return;
+        socket.emit('request part', currentPart.position);
+        currentPart = null;
+        $("#retriever").animate({"top": "-100vh"}, 500, function()
+        {
+            $("#retriever-partnumber").text("an unknown component");
+            $("#retriever-manufacturer").text("Manufacturer:");
+            $("#retriever-description").text("Description:");
+            $("#partnumber").val('');
+            $("#retriever-info").css({"opacity": "0"});
+        });
+        $("#retriever-instruction").animate({"top": "0"}, 500);
+    });
+    $("#retriever-cancel").click(function() {
+        currentPart = null;
+        $("#retriever").animate({"top": "100vh"}, 500, function()
+        {
+            $("#retriever-partnumber").text("an unknown component");
+            $("#retriever-manufacturer").text("Manufacturer:");
+            $("#retriever-description").text("Description:");
+            $("#partnumber").val('');
+            $("#retriever-info").css({"opacity": "0"});
+        });
+    });
+    $("#retriever-done").click(function() {
+        $("#retriever").css({"top": "100vh"}, 500);
+        $("#retriever-instruction").animate({"top": "100vh"}, 500);
     });
 });
 

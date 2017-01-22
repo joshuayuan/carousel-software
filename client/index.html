@@ -1,6 +1,6 @@
 <!DOCTYPE>
 <html>
-    <head> <title> Okay Raphael </title> 
+    <head> <title>Carousel</title> 
         <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
@@ -21,8 +21,8 @@
             <div id="toblur">
                 <h3>Your part is</h3>
                 <h1 id="adder-partnumber">not found.</h1>
-                <h2 id="adder-manufacturer">Manufacturer: <strong>raphael</strong></h2>
-                <h2 id="adder-description">Description: <strong>10Kohm 1 voltage 12 farad boy</strong></h2>
+                <h2 id="adder-manufacturer">Manufacturer:</h2>
+                <h2 id="adder-description">Description:</h2>
                 <div id="adder-instruction">
                     <h3>Please clip the bag to the binder clip adjacent to the lit LED! #420blazeit #lit</h3>
                 </div>
@@ -32,27 +32,21 @@
         </div>
 
         <div id="retriever">
-            <input type="text" name="partnumber" id="partnumber">
+            <input type="text" name="partnumber" id="partnumber" placeholder="Part Number">
             <button id="retriever-search">Search</button>
             <div id="retriever-info">
-                <h2>You requested for</h2>
+                <h2>You searched for</h2>
                 <h1 id="retriever-partnumber">an unknown component.</h1>
-                <h2 id="retriever-manufacturer">Manufacturer: <strong>raphael</strong></h2>
-                <h2 id="retriever-description">Description: <strong>10Kohm 1 voltage 12 farad boy</strong></h2>
+                <h2 id="retriever-manufacturer">Manufacturer:</h2>
+                <h2 id="retriever-description">Description:</h2>
             </div>
             <button id="retriever-request">Request</button>
+            <button id="retriever-cancel">Cancel</button>
         </div>
         <div id="retriever-instruction">
             <h2>Please take the bag from the clip adjacent to the lit LED! #420blazin #lit</h2>
             <button id="retriever-done">Done</button>
         </div>
-
-
-
-
-
-
-
         <form id="upload-form"
               enctype="multipart/form-data"
               action="/upload"
